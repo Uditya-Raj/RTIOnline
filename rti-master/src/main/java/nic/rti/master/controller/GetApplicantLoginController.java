@@ -24,7 +24,7 @@ public class  GetApplicantLoginController {
         if(applicantLogin != null && !applicantLogin.isEmpty()){
             return new ResponseEntity<>(applicantLogin, HttpStatus.OK);
         }
-        return  new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 }
