@@ -26,6 +26,7 @@ public class GetApplicantLoginService {
             return Collections.emptyList();
         }
 
+
     }
 
 }

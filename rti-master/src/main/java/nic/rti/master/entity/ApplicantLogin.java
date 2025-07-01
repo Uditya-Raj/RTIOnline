@@ -67,6 +67,5 @@ public class ApplicantLogin {
 
     @Column(name = "StateName", length = 30)
     private String stateName;
-    
 
 }

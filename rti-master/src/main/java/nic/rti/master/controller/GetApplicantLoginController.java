@@ -20,9 +20,9 @@ public class  GetApplicantLoginController {
     @GetMapping(value = "/GetApplicantLogin",produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getApplicantLogin(){
 
-        List<ApplicantLogin> applicantLogin = applicantLoginService.getApplicantLogin();
-        if(applicantLogin != null && !applicantLogin.isEmpty()){
-            return new ResponseEntity<>(applicantLogin, HttpStatus.OK);
+        List<ApplicantLogin> applicants = applicantLoginService.getApplicantLogin();
+        if(applicants != null && !applicants.isEmpty()){
+            return new ResponseEntity<>(applicants, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
