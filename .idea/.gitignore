@@ -2,4 +2,4 @@
 /shelf/
 /workspace.xml
 # Ignore local config file
-src/main/resources/application.properties
+rti-master/src/main/resources/application.properties
