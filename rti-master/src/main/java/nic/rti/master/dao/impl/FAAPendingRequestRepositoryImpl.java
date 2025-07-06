@@ -2,12 +2,11 @@ package nic.rti.master.dao.impl;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import lombok.Data;
 import nic.rti.master.dao.FAAPendingRequestRepository;
-import nic.rti.master.dto.PendingRequestDTO;
 import nic.rti.master.dto.PendingRequestResponseDTO;
 import org.springframework.stereotype.Repository;
-import jakarta.persistence.Query;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +45,6 @@ public class FAAPendingRequestRepositoryImpl implements FAAPendingRequestReposit
         query.setParameter("limit", limit);
         query.setParameter("offset", offset);
 
-        @SuppressWarnings("unchecked")
         List<Object[]> rows = query.getResultList();
         List<PendingRequestResponseDTO> dtoList = new ArrayList<>();
 
@@ -62,6 +60,7 @@ public class FAAPendingRequestRepositoryImpl implements FAAPendingRequestReposit
         return dtoList;
     }
 
+    @Override
     public long countUnderProcess(Integer applId) {
         String sql = """
                 SELECT COUNT(*) 
@@ -84,7 +83,6 @@ public class FAAPendingRequestRepositoryImpl implements FAAPendingRequestReposit
         return ((Number) result).longValue();
     }
 
-    // ✅ FIXED: fetchCommentCPIO
     @Override
     public List<PendingRequestResponseDTO> fetchCommentCPIO(Integer applId, Integer limit, Integer offset) {
         String sql = """
@@ -111,7 +109,6 @@ public class FAAPendingRequestRepositoryImpl implements FAAPendingRequestReposit
         query.setParameter("limit", limit);
         query.setParameter("offset", offset);
 
-        @SuppressWarnings("unchecked")
         List<Object[]> rows = query.getResultList();
         List<PendingRequestResponseDTO> result = new ArrayList<>();
 
@@ -141,7 +138,6 @@ public class FAAPendingRequestRepositoryImpl implements FAAPendingRequestReposit
                   AND p."ActiveIdle" = 'Y'
                   AND a.closing_date IS NULL
                   AND a.applid = :applId
-
                 """;
 
         Query query = entityManager.createNativeQuery(sql);
@@ -149,7 +145,6 @@ public class FAAPendingRequestRepositoryImpl implements FAAPendingRequestReposit
         Object result = query.getSingleResult();
         return ((Number) result).longValue();
     }
-    /// /////////888/////////////////
 
     @Override
     public List<PendingRequestResponseDTO> fetchModify(Integer applId, Integer limit, Integer offset) {
@@ -174,7 +169,6 @@ public class FAAPendingRequestRepositoryImpl implements FAAPendingRequestReposit
         query.setParameter("limit", limit);
         query.setParameter("offset", offset);
 
-        @SuppressWarnings("unchecked")
         List<Object[]> rows = query.getResultList();
         List<PendingRequestResponseDTO> result = new ArrayList<>();
 
@@ -187,6 +181,7 @@ public class FAAPendingRequestRepositoryImpl implements FAAPendingRequestReposit
             dto.setEntryDate((String) row[4]);
             result.add(dto);
         }
+
         return result;
     }
 
@@ -230,7 +225,6 @@ public class FAAPendingRequestRepositoryImpl implements FAAPendingRequestReposit
         query.setParameter("limit", limit);
         query.setParameter("offset", offset);
 
-        @SuppressWarnings("unchecked")
         List<Object[]> rows = query.getResultList();
         List<PendingRequestResponseDTO> result = new ArrayList<>();
 
@@ -267,24 +261,23 @@ public class FAAPendingRequestRepositoryImpl implements FAAPendingRequestReposit
     @Override
     public List<PendingRequestResponseDTO> fetchPending20Days(Integer applId, Integer limit, Integer offset) {
         String sql = """
-        SELECT registration_no,
-               name,
-               TO_CHAR(recvd_date, 'DD/MM/YYYY') AS recvd_date,
-               TO_CHAR(entry_date, 'YYYY-MM-DD"T"HH24:MI:SS"Z"') AS entry_date
-        FROM RTIMIS.appeal
-        WHERE closing_date IS NULL
-          AND applid = :applId
-          AND entry_date <= NOW() - INTERVAL '20 days'
-        ORDER BY entry_date DESC
-        LIMIT :limit OFFSET :offset
-    """;
+            SELECT registration_no,
+                   name,
+                   TO_CHAR(recvd_date, 'DD/MM/YYYY') AS recvd_date,
+                   TO_CHAR(entry_date, 'YYYY-MM-DD"T"HH24:MI:SS"Z"') AS entry_date
+            FROM RTIMIS.appeal
+            WHERE closing_date IS NULL
+              AND applid = :applId
+              AND entry_date <= NOW() - INTERVAL '20 days'
+            ORDER BY entry_date DESC
+            LIMIT :limit OFFSET :offset
+            """;
 
         Query query = entityManager.createNativeQuery(sql);
         query.setParameter("applId", applId);
         query.setParameter("limit", limit);
         query.setParameter("offset", offset);
 
-        @SuppressWarnings("unchecked")
         List<Object[]> rows = query.getResultList();
         List<PendingRequestResponseDTO> result = new ArrayList<>();
 
@@ -303,20 +296,16 @@ public class FAAPendingRequestRepositoryImpl implements FAAPendingRequestReposit
     @Override
     public long countPending20Days(Integer applId) {
         String sql = """
-        SELECT COUNT(*)
-        FROM RTIMIS.appeal
-        WHERE closing_date IS NULL
-          AND applid = :applId
-          AND entry_date <= NOW() - INTERVAL '20 days'
-    """;
+            SELECT COUNT(*)
+            FROM RTIMIS.appeal
+            WHERE closing_date IS NULL
+              AND applid = :applId
+              AND entry_date <= NOW() - INTERVAL '20 days'
+            """;
 
         Query query = entityManager.createNativeQuery(sql);
         query.setParameter("applId", applId);
         Object result = query.getSingleResult();
         return ((Number) result).longValue();
     }
-
-
-
-
 }
